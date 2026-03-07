@@ -959,6 +959,24 @@ See the [commune-cookbook](https://github.com/shanjai-raj/commune-cookbook) for 
 
 ---
 
+## Ecosystem
+
+This SDK is one part of a three-repo ecosystem:
+
+| Repo | What it is | When to use it |
+|------|-----------|----------------|
+| **commune-mail** (this repo) | Python SDK | You're building a Python agent |
+| **[commune-ai](https://github.com/shanjai-raj/commune-ai)** | TypeScript/Node SDK | You're building in Node, Deno, or Bun |
+| **[commune-mcp](https://github.com/shanjai-raj/commune-mcp)** | MCP server | You want Claude Desktop, Cursor, or Windsurf to have email |
+| **[commune-cookbook](https://github.com/shanjai-raj/commune-cookbook)** | Examples + notebooks | You want working code for LangChain, CrewAI, LangGraph, etc. |
+
+**Where to go next:**
+- Got the SDK installed and want a working agent? → [`commune-cookbook/00_START_HERE.md`](https://github.com/shanjai-raj/commune-cookbook/blob/main/00_START_HERE.md)
+- Want to run this in Claude Desktop or Cursor? → [`commune-mcp`](https://github.com/shanjai-raj/commune-mcp)
+- Something broken? → [`ERRORS.md`](ERRORS.md)
+
+---
+
 ## Resources
 
 - **Docs:** [commune.email/docs](https://commune.email/docs)
@@ -966,6 +984,7 @@ See the [commune-cookbook](https://github.com/shanjai-raj/commune-cookbook) for 
 - **npm (TypeScript SDK):** [npmjs.com/package/commune-ai](https://www.npmjs.com/package/commune-ai)
 - **MCP Server:** [github.com/shanjai-raj/commune-mcp](https://github.com/shanjai-raj/commune-mcp)
 - **Cookbook:** [github.com/shanjai-raj/commune-cookbook](https://github.com/shanjai-raj/commune-cookbook)
+- **Start Here (cookbook):** [00_START_HERE.md](https://github.com/shanjai-raj/commune-cookbook/blob/main/00_START_HERE.md)
 - **API Reference:** [API_REFERENCE.md](API_REFERENCE.md)
 
 ## License
