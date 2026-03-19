@@ -1418,22 +1418,21 @@ class CommuneClient:
         self,
         api_key: str | None = None,
         *,
-        wallet: str | object | None = None,
+        wallet: object | None = None,
         base_url: str | None = None,
         timeout: float = 30.0,
     ):
         resolved_key = api_key or os.environ.get("COMMUNE_API_KEY") or ""
-        resolved_wallet = wallet or os.environ.get("COMMUNE_WALLET_KEY")
 
         if resolved_key:
             self._http = HttpClient(api_key=resolved_key, base_url=base_url, timeout=timeout)
-        elif resolved_wallet:
+        elif wallet is not None:
             from commune._x402_http import X402HttpClient
-            self._http = X402HttpClient(wallet=resolved_wallet, base_url=base_url, timeout=timeout)
+            self._http = X402HttpClient(wallet=wallet, base_url=base_url, timeout=timeout)
         else:
             raise ValueError(
-                "No auth configured. Pass api_key= or wallet=, "
-                "or set COMMUNE_API_KEY / COMMUNE_WALLET_KEY."
+                "No auth configured. Pass api_key= or wallet= (a configured x402Client), "
+                "or set COMMUNE_API_KEY."
             )
         self.domains = _Domains(self._http)
         self.inboxes = _Inboxes(self._http)

@@ -1,9 +1,9 @@
 """Async x402 payment-aware HTTP client for the Commune SDK.
 
-Async counterpart to _x402_http.py. Handles the x402 payment flow
-transparently for async frameworks (FastAPI, asyncio).
+Async counterpart to _x402_http.py. The developer creates and owns the x402 client —
+we never handle private keys directly.
 
-Requires optional dependencies: pip install commune[x402]
+Requires optional dependencies: pip install x402[evm] eth-account
 """
 
 from __future__ import annotations
@@ -13,24 +13,30 @@ from typing import Any
 import httpx
 
 from commune._async_http import AsyncHttpClient, DEFAULT_BASE_URL, _resolve_sdk_version
-from commune._x402_http import X402HttpClient
 from commune.exceptions import CommuneError
 
 
 class AsyncX402HttpClient(AsyncHttpClient):
-    """Async HTTP client that pays for API calls via x402 (USDC on Base)."""
+    """Async HTTP client that pays for API calls via x402 (USDC).
+
+    Accepts a pre-configured x402Client. We never handle private keys directly.
+    """
 
     def __init__(
         self,
-        wallet: str | object,
+        wallet: object,
         base_url: str | None = None,
         timeout: float = 30.0,
     ):
-        self._base_url = (base_url or DEFAULT_BASE_URL).rstrip("/")
-        self._wallet = wallet
-        self._x402_client = X402HttpClient._create_x402_client(wallet)
+        if not hasattr(wallet, 'create_payment_payload'):
+            raise TypeError(
+                "wallet must be a configured x402Client with a create_payment_payload method.\n"
+                "See: https://docs.commune.email/integrations/x402/integration"
+            )
 
-        # Base httpx async client — no Authorization header
+        self._base_url = (base_url or DEFAULT_BASE_URL).rstrip("/")
+        self._x402_client = wallet
+
         self._client = httpx.AsyncClient(
             base_url=self._base_url,
             headers={
@@ -84,7 +90,6 @@ class AsyncX402HttpClient(AsyncHttpClient):
         json: dict[str, Any] | None = None,
         unwrap_data: bool = True,
     ) -> Any:
-        """Make a request, handling 402 payment flow transparently."""
         clean_params = {k: v for k, v in (params or {}).items() if v is not None} if params else None
         resp = await self._client.request(method, path, params=clean_params or None, json=json)
 
