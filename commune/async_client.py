@@ -978,16 +978,23 @@ class AsyncCommuneClient:
         self,
         api_key: str | None = None,
         *,
+        wallet: str | object | None = None,
         base_url: str | None = None,
         timeout: float = 30.0,
     ):
         resolved_key = api_key or os.environ.get("COMMUNE_API_KEY") or ""
-        if not resolved_key:
+        resolved_wallet = wallet or os.environ.get("COMMUNE_WALLET_KEY")
+
+        if resolved_key:
+            self._http = AsyncHttpClient(api_key=resolved_key, base_url=base_url, timeout=timeout)
+        elif resolved_wallet:
+            from commune._x402_async_http import AsyncX402HttpClient
+            self._http = AsyncX402HttpClient(wallet=resolved_wallet, base_url=base_url, timeout=timeout)
+        else:
             raise ValueError(
-                "No API key provided. Pass api_key= or set the COMMUNE_API_KEY "
-                "environment variable."
+                "No auth configured. Pass api_key= or wallet=, "
+                "or set COMMUNE_API_KEY / COMMUNE_WALLET_KEY."
             )
-        self._http = AsyncHttpClient(api_key=resolved_key, base_url=base_url, timeout=timeout)
         self.domains = _AsyncDomains(self._http)
         self.inboxes = _AsyncInboxes(self._http)
         self.threads = _AsyncThreads(self._http)
